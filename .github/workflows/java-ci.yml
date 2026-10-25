@@ -24,6 +24,15 @@ jobs:
         with:
           distribution: temurin
           java-version: '11'
+          
+      - name: Run Checkstyle
+        run: |
+          curl -fsSLo checkstyle.jar \
+            https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.21.4/checkstyle-10.21.4-all.jar
+          java -jar checkstyle.jar \
+            -c config/checkstyle/checkstyle.xml \
+            *.java
+
 
       - name: Compile Java source files
         run: javac *.java
