@@ -101,6 +101,9 @@ public class ParserTest {
         System.out.println();
         testStreamingApi();
         testMaximumPayloadLength();
+        testUnsignedMessageId();
+testStreamingRejectsInvalidHeader();
+testValidRecordBeforeMalformedRecord();
         System.out.println("All tests passed!");
     }
 
