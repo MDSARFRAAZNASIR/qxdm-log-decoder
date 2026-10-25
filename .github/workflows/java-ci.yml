@@ -48,3 +48,6 @@ jobs:
 
       - name: Run diagnostic analyzer tests
         run: java DiagnosticAnalyzerTest
+
+      - name: Run diagnostic timeline exporter tests
+        run: java DiagnosticTimelineExporterTest
