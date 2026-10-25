@@ -2,7 +2,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class DiagnosticAnalyzer {
 
@@ -29,30 +31,43 @@ public final class DiagnosticAnalyzer {
         List<DiagnosticEvent> sorted = sortEvents(events);
         List<String> findings = new ArrayList<>();
 
-        boolean handoverPending = false;
+        Map<String, DiagnosticEvent> pending =
+                new HashMap<>();
 
         for (DiagnosticEvent event : sorted) {
+            String attemptId = event.getAttemptId();
+
             switch (event.getEventType()) {
                 case HANDOVER_COMMAND:
-                    handoverPending = true;
+                    if (hasAttemptId(attemptId)) {
+                        pending.put(attemptId, event);
+                    }
                     break;
 
                 case HANDOVER_COMPLETE:
-                    handoverPending = false;
+                    if (hasAttemptId(attemptId)) {
+                        pending.remove(attemptId);
+                    }
                     break;
 
                 case RADIO_LINK_FAILURE:
-                    if (handoverPending) {
+                    if (hasAttemptId(attemptId)
+                            && pending.containsKey(attemptId)) {
+
+                        DiagnosticEvent command =
+                                pending.remove(attemptId);
+
                         findings.add(
-                                "Radio-link failure occurred after "
-                                + "a handover command and before "
-                                + "a recorded handover completion "
-                                + "at timestamp "
+                                "Radio-link failure at timestamp "
                                 + event.getTimestampMillis()
+                                + " followed handover attempt "
+                                + attemptId
+                                + " from cell "
+                                + command.getServingCell()
+                                + " toward cell "
+                                + command.getTargetCell()
                                 + ". Investigate related signaling "
                                 + "and recovery events.");
-
-                        handoverPending = false;
                     }
                     break;
 
@@ -62,5 +77,9 @@ public final class DiagnosticAnalyzer {
         }
 
         return findings;
+    }
+
+    private static boolean hasAttemptId(String attemptId) {
+        return attemptId != null && !attemptId.trim().isEmpty();
     }
 }

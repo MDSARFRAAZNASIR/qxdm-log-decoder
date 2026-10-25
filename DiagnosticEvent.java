@@ -14,6 +14,7 @@ public final class DiagnosticEvent {
     private final String servingCell;
     private final String targetCell;
     private final String description;
+    private final String attemptId;
 
     public DiagnosticEvent(
             long timestampMillis,
@@ -21,6 +22,17 @@ public final class DiagnosticEvent {
             String servingCell,
             String targetCell,
             String description) {
+        this(timestampMillis, eventType, servingCell,
+                targetCell, description, null);
+    }
+
+    public DiagnosticEvent(
+            long timestampMillis,
+            EventType eventType,
+            String servingCell,
+            String targetCell,
+            String description,
+            String attemptId) {
 
         if (timestampMillis < 0) {
             throw new IllegalArgumentException(
@@ -37,6 +49,7 @@ public final class DiagnosticEvent {
         this.servingCell = servingCell;
         this.targetCell = targetCell;
         this.description = description;
+        this.attemptId = attemptId;
     }
 
     public long getTimestampMillis() {
@@ -58,4 +71,9 @@ public final class DiagnosticEvent {
     public String getDescription() {
         return description;
     }
+
+    public String getAttemptId() {
+        return attemptId;
+    }
 }
+
