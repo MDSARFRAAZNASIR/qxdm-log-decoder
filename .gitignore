@@ -1,0 +1,18 @@
+
+# Compiled Java files
+*.class
+
+# Generated CSV files
+*.csv
+
+# Generated benchmark data
+benchmark-data.bin
+
+# IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Operating system files
+.DS_Store
+Thumbs.db
