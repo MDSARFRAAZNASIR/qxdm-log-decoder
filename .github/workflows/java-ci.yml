@@ -45,3 +45,6 @@ jobs:
 
       - name: Run CSV exporter tests
         run: java CsvExporterTest
+
+      - name: Run diagnostic analyzer tests
+        run: java DiagnosticAnalyzerTest
