@@ -1,3 +1,7 @@
+
+![Java CI](https://github.com/MDSARFRAAZNASIR/qxdm-log-decoder/actions/workflows/java-ci.yml/badge.svg)
+
+
 # QXDM Log Decoder — Java Binary Parser
 
 A Java 11 learning project demonstrating binary record parsing, input validation, streaming processing, hexadecimal conversion, and CSV export.
