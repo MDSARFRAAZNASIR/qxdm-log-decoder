@@ -207,4 +207,80 @@ private static void testMaximumPayloadLength() throws Exception {
             );
         }
     }
+
+    
+private static void testUnsignedMessageId() throws Exception {
+    byte[] data = {
+        (byte) 0xAA, 0x55,
+        (byte) 0xFF, (byte) 0xFF,
+        0x00, 0x00
+    };
+
+    BinaryRecordParser parser = new BinaryRecordParser();
+
+    List<BinaryRecord> records = parser.parse(
+        new ByteArrayInputStream(data)
+    );
+
+    check(
+        records.size() == 1
+            && records.get(0).getMessageId() == 65535,
+        "Unsigned message ID 65535 decoded correctly"
+    );
+}
+
+private static void testStreamingRejectsInvalidHeader()
+        throws Exception {
+    byte[] data = {0x00, 0x00};
+
+    BinaryRecordParser parser = new BinaryRecordParser();
+    int[] count = {0};
+
+    try {
+        parser.parse(
+            new ByteArrayInputStream(data),
+            record -> count[0]++
+        );
+
+        throw new AssertionError(
+            "Streaming parser accepted an invalid header"
+        );
+    } catch (IOException expected) {
+        check(
+            count[0] == 0,
+            "Streaming API rejects invalid header"
+        );
+    }
+}
+
+private static void testValidRecordBeforeMalformedRecord()
+        throws Exception {
+    byte[] data = {
+        // Valid record: ID 1, one-byte payload
+        (byte) 0xAA, 0x55, 0x00, 0x01, 0x00, 0x01, 0x11,
+
+        // Invalid header follows the valid record
+        0x00, 0x00
+    };
+
+    BinaryRecordParser parser = new BinaryRecordParser();
+    int[] count = {0};
+
+    try {
+        parser.parse(
+            new ByteArrayInputStream(data),
+            record -> count[0]++
+        );
+
+        throw new AssertionError(
+            "Malformed second record was accepted"
+        );
+    } catch (IOException expected) {
+        check(
+            count[0] == 1,
+            "Valid record emitted before malformed record is rejected"
+        );
+    }
+}
+
 }
